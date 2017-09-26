@@ -1,4 +1,0 @@
-#demo in 2.3.4.1,安装必备的软件
-sudo apt-get install qt5-default libqt5svg5-dev libglew-dev libxml2-dev libasound2-dev clang graphviz
-
-#
