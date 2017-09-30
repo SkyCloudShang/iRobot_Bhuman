@@ -21,7 +21,7 @@
 
 #endif	/* ${GUARD_NAME} */
 ```
-其中Description处,留给大家填写此文件定义了什么接口,实现了什么功能.保存后退出,使用NetBeans尝试建立新的C++ source files,
+其中Description处,留给大家填写此文件定义了什么接口,实现了什么功能.保存后退出,使用NetBeans尝试建立新的C++ Header files,
 若建立出的新文件如下图所示,则设置成功.
 ![image](https://github.com/SkyCloudShang/Pictures/blob/master/C%2B%2Bheaderstd.png)
 
