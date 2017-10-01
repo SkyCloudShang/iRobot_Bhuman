@@ -29,7 +29,6 @@ teams = [
   {number = 38; name = "Linköping-Humanoids";},
   {number = 41; name = "Aztlan-Team";},
   {number = 42; name = "CMSingle";},
-  {number = 55; name = "iRobot";},
   {number = 98; name = "Team-Blue";},
   {number = 99; name = "Team-Red";},
 ];

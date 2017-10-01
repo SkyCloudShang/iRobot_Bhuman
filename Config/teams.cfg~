@@ -24,7 +24,7 @@ teams = [
       _,
       _
     ];
-  },
+  }
 {
     name = iRobot;
     number =55;
