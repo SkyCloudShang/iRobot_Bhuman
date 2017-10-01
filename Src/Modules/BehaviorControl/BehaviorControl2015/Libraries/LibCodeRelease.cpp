@@ -15,6 +15,7 @@ namespace Behavior2015
   void LibCodeRelease::preProcess()
   {
     angleToGoal = (theRobotPose.inversePose * Vector2f(theFieldDimensions.xPosOpponentGroundline, 0.f)).angle();
+    angleToCenter=(theRobotPose.inversePose * Vector2f(0.f, 0.f)).angle();
   }
 
   void LibCodeRelease::postProcess()

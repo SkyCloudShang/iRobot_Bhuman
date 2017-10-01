@@ -18,6 +18,7 @@
 #include "Options/Output/MotionRequest/WalkToTarget.h"
 #include "Options/Output/MotionRequest/InWalkKick.h"
 #include "Options/Output/MotionRequest/GetUpEngine.h"
+#include"Options/Output/MotionRequest/WalkToTargetWithPathMode.h"
 #include "Options/Output/PlaySound.h"
 #include "Options/Output/PlaySamples.h"
 

@@ -17,6 +17,9 @@ public:
     
   int timeSinceBallWasSeen();
   
- 
+   //angle to oppenent goal
   float angleToGoal;
+  
+   //angle to the center point
+  float angleToCenter;
 };
