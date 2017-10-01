@@ -24,11 +24,17 @@ option(HandleGameState)
   }
 
   /** Stand still and wait. */
-  initial_state(initial)
+ initial_state(initial)
   {
     action
     {
       SetHeadPanTilt(0.f, 0.f, 150_deg);
+      if(theGameInfo.secondaryState == STATE2_PENALTYSHOOT)
+          PlaySound(theGameInfo.kickOffTeam==theOwnTeamInfo.teamNumber?
+              "penaltyStriker.wav":"penaltyKeeper.wav");
+      if(theGameInfo.secondaryState == STATE2_PENALTYSHOOT)
+        Stand();
+      else
       SpecialAction(SpecialActionRequest::standHigh);
     }
   }
@@ -48,6 +54,7 @@ option(HandleGameState)
   {
     action
     {
+      Annotation("Getting up.");
       GetUp();
     }
   }
@@ -57,6 +64,7 @@ option(HandleGameState)
   {
     action
     {
+      ArmContact();
       ReadyState();
     }
   }
@@ -66,6 +74,8 @@ option(HandleGameState)
   {
     action
     {
+      if(theWhistle.confidenceOfLastWhistleDetection>50)
+           goto playing;
       Stand();
     }
   }
@@ -75,6 +85,7 @@ option(HandleGameState)
   {
     action
     {
+      ArmContact();
       Demo();
     }
   }

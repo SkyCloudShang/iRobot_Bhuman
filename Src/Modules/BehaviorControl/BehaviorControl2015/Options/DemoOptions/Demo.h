@@ -1,34 +1,108 @@
+//option(Demo)
+//{
+//  common_transition
+//  {
+//    switch(libDemo.demoGameState)
+//      {
+//      case LibDemo::wavingPlinking:
+//        goto waving;
+//      case LibDemo::normal:
+//        goto normal;
+//      default:
+//        ASSERT(false);
+//        break;
+//    }
+//  }
+//
+//  initial_state(normal)
+//  {
+//    action
+//    {
+//      Striker();
+//      LookForward();
+//    }
+//  }
+//
+//  state(waving)
+//  {
+//    action
+//    {
+//      LookForward();
+//      Waving();
+//    }
+//  }
+//}
+
 option(Demo)
 {
-  common_transition
+  initial_state(normalDoOwnRole)
   {
-    switch(libDemo.demoGameState)
+      transition
       {
-      case LibDemo::wavingPlinking:
-        goto waving;
-      case LibDemo::normal:
-        goto normal;
-      default:
-        ASSERT(false);
-        break;
+          if(state_time>1000)
+              goto judge;
+      }
+      action
+      {
+         LookForward();
+         Stand();
+      }
+  }
+  
+  state(judge)
+  {
+    transition
+    {
+         if(theRobotInfo.number==1) 
+         {
+             goto keeper;
+         }
+         else if(theRobotInfo.number==2)
+         {
+             goto striker;
+         }
+         else if(theRobotInfo.number==5)
+         {
+             goto supporter;
+         }
+         else
+         {
+             goto stand;
+         }
     }
   }
 
-  initial_state(normal)
+  state(keeper)
   {
-    action
-    {
-      Striker();
-      LookForward();
-    }
+      action
+      {
+          Keeper();
+      }
   }
-
-  state(waving)
+  
+  state(striker)
   {
-    action
-    {
-      LookForward();
-      Waving();
-    }
+      action
+      {
+          Striker();
+      }
   }
+  
+  state(supporter)
+  {
+      action
+      {
+          Supporter();
+      }
+  }
+  
+  state(stand)
+  {
+      action
+      {
+          LookForward();
+          Stand();
+      }
+  }
+  
 }

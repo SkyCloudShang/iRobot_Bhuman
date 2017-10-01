@@ -5,7 +5,7 @@ option(PlayingState)
     transition
     {
       //if(!libDemo.parameters.isDemoActive)
-      //  goto selectAction;
+      //  goto selectAction
     }
     action
     {

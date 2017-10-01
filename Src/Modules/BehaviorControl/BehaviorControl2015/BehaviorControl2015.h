@@ -125,6 +125,7 @@ MODULE(BehaviorControl2015,
   REQUIRES(TeammateReliability),
   REQUIRES(TorsoMatrix), // Required for kicks
   REQUIRES(WalkingEngineOutput),
+  REQUIRES(Whistle),
   PROVIDES(ActivationGraph),
   PROVIDES(ArmMotionRequest),
   PROVIDES(BehaviorLEDRequest),

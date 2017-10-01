@@ -162,7 +162,6 @@ option(ReadyState)
           Stand();
       }
   }
-  
 }
 
 
