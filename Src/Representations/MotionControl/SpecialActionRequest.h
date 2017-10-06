@@ -23,6 +23,18 @@ STREAMABLE(SpecialActionRequest,
     stand,
     standHigh,
     standHighLookUp,
+    keeperBlockLeft,
+    afterGenuflect,
+    genuflect,
+    sumoPosition,
+    standUpBackNao,
+    standUpFrontNao,
+    keeperJumpLeftPenalty,
+    keeperJumpLeft,
+    keeperJumpLeftSim,
+    sitDownKeeper,
+    goUp,
+    sitDown2,
     getUpEngineDummy, //used for debugging motion of getUpEngine
   });
 

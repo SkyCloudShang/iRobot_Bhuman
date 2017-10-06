@@ -22,7 +22,15 @@ STREAMABLE(Role,
   /** The different roles */
   ENUM(RoleType,
   {,
+//    undefined,
+//    none,
+    //change by Hust_iRobot
     undefined,
+    keeper,
+    striker,
+    defender,
+    supporter,
+    breakingsupporter,
     none,
   });
 

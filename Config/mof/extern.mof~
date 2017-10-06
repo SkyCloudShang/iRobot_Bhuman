@@ -21,7 +21,6 @@ transition keeperJumpLeft keeperJumpLeft start
 transition keeperJumpLeftSim keeperJumpLeftSim start
 transition sitDownKeeper sitDownKeeper start
 transition goUp goUp start 
-transition sitDown2 sitDown2 start
 
 transition stand stand start
 transition standHigh standHigh start

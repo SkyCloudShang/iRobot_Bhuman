@@ -38,19 +38,22 @@ option(ReadyState)
           }
           else if(theRobotInfo.number==2)
           {
-              goto walkToPlayer2Point;
+              if(theGameInfo.kickOffTeam==theOwnTeamInfo.teamNumber)
+                  goto walkToStrikerPoint;
+              else
+                  goto walkToStrikerKickPoint;
           }
           else if(theRobotInfo.number==3)
           {
-              goto walkToPlayer3Point;
+              goto walkToDefenderPoint;
           }
           else if(theRobotInfo.number==4)
           {
-              goto walkToPlayer4Point;
+              goto walkToBreakingSupporterPoint;
           }
           else if(theRobotInfo.number==5)
           {
-              goto walkToPlayer5Point;
+              goto walkToSupporterPoint;
           }
       }
   }
@@ -73,12 +76,12 @@ option(ReadyState)
       }
   }
   
-  state(walkToPlayer2Point)
+  state(walkToStrikerPoint)
   {
       transition
       {
-          if(libCodeRelease.between(theRobotPose.translation.x(),-2050.f,-1950.f) && 
-                  libCodeRelease.between(theRobotPose.translation.y(),950.f,1050.f) )
+          if(libCodeRelease.between(theRobotPose.translation.x(),-755.f,-745.f) && 
+                  libCodeRelease.between(theRobotPose.translation.y(),-5.f,5.f) )
           {
               goto end;
           }
@@ -86,11 +89,28 @@ option(ReadyState)
       action
       {
           LookForward();
-          WalkToTargetWithPathMode(Pose2f(100.f,100.f,100.f),Pose2f(libCodeRelease.angleToCenter,-2000.f,1000.f));
+          WalkToTargetWithPathMode(Pose2f(100.f,100.f,100.f),Pose2f(libCodeRelease.angleToCenter,-750.f,0.f));
       }
   }
   
-  state(walkToPlayer3Point)
+  state(walkToStrikerKickPoint)
+  {
+      transition
+      {
+          if(libCodeRelease.between(theRobotPose.translation.x(),-5.f,5.f) && 
+                  libCodeRelease.between(theRobotPose.translation.y(),-5.f,5.f) )
+          {
+              goto end;
+          }
+      }
+      action
+      {
+          LookForward();
+          WalkToTargetWithPathMode(Pose2f(100.f,100.f,100.f),Pose2f(libCodeRelease.angleToCenter,0.f,0.f));
+      }
+  }
+  
+  state(walkToDefenderPoint)
   {
       transition
       {
@@ -107,7 +127,7 @@ option(ReadyState)
       }
   }
   
-  state(walkToPlayer4Point)
+  state(walkToBreakingSupporterPoint)
   {
       transition
       {
@@ -124,7 +144,7 @@ option(ReadyState)
       }
   }
   
-  state(walkToPlayer5Point)
+  state(walkToSupporterPoint)
   {
       transition
       {

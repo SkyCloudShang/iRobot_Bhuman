@@ -198,6 +198,24 @@ bool TeammateDataProvider::handleMessage(InMessage& message)
           REMOTE_TO_LOCAL_TIME(currentTeammate->fieldCoverageLine.timestamps[x]);
       }
       return true;
+      
+    //add by shangyunfei
+    case idHasArrived:
+      if(currentTeammate)
+          message.bin >> currentTeammate->firstRobotArrived;
+      return true;
+    case idRoleType:
+      if(currentTeammate)
+          message.bin >> currentTeammate->teammateRoleType;
+      return true;
+    case idRobotHealth:
+      if(currentTeammate)
+          message.bin >> currentTeammate->teammateHealth;
+      return true;
+    case idTimeToReachBall:
+      if(currentTeammate)
+          message.bin >> currentTeammate->teammateTimeToReachBall;
+      return true;
     default:
       return true;
   }
@@ -270,4 +288,5 @@ void TeammateDataProvider::updateData(TeammateData& teammateData)
   PLOT("module:TeammateDataProvider:ntpOffset12", ntp.timeSyncBuffers[12].bestOffset);
 }
 
+ 
 MAKE_MODULE(TeammateDataProvider, communication)

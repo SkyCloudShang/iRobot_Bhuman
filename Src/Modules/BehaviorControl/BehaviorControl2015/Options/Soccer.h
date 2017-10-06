@@ -1,144 +1,150 @@
 /** The root option that controls the behavior before the robot actually starts to play */
 option(Soccer)
 {
-  common_transition
-  {
-    theArmMotionRequest.armMotion[Arms::left] = ArmMotionRequest::none;
-    theArmMotionRequest.armMotion[Arms::right] = ArmMotionRequest::none;
+    common_transition
+    {
+        theArmMotionRequest.armMotion[Arms::left] = ArmMotionRequest::none;
+        theArmMotionRequest.armMotion[Arms::right] = ArmMotionRequest::none;
 
-    if(!theCameraStatus.ok)
-      goto sitDown;
-  }
+        if (!theCameraStatus.ok)
+            goto sitDown;
+        
+        //add by shangyunfei to calculate time To reachBall
+        Vector2f bPos = Transformation::robotToField(theRobotPose,theBallModel.estimate.position);
+        float distance=(float)sqrt((theRobotPose.translation.x()-bPos.x())*(theRobotPose.translation.x()-bPos.x())+(theRobotPose.translation.y()-bPos.y())*(theRobotPose.translation.y()-bPos.y()));
+        theBehaviorStatus.estimatedTimeToReachBall=distance/0.2f;
+          
+        //add time for the rotation to the ball
+        theBehaviorStatus.estimatedTimeToReachBall+=std::abs(theBallModel.estimate.position.angle())/toDegrees(0.065f);
+     
+        // when the robot currently dos not see the ball extra time is added
+        theBehaviorStatus.estimatedTimeToReachBall+=theFrameInfo.getTimeSince(theBallModel.timeWhenLastSeen);   
+       
+        //add by shangyunfei to decides the Role
+      switch(theRobotInfo.number)
+      {
+        case 1:theBehaviorStatus.roleType =BehaviorStatus::keeper;break;
+        case 2:theBehaviorStatus.roleType =BehaviorStatus::striker;break;
+        case 3:theBehaviorStatus.roleType =BehaviorStatus::defender;break;
+        case 4:theBehaviorStatus.roleType =BehaviorStatus::breakingsupporter;break; 
+        case 5:theBehaviorStatus.roleType =BehaviorStatus::supporter;break;  
+          default :break;
+       }    
+    }
 
-  /** Initially, all robot joints are off until the chest button is pressed. */
-  initial_state(playDead)
-  {
-    transition
+    /** Initially, all robot joints are off until the chest button is pressed. */
+    initial_state(playDead)
     {
-      if(SystemCall::getMode() == SystemCall::simulatedRobot)
-        goto simRobotStandHigh; // Don't wait for the button in SimRobot
+        transition{
+            if (SystemCall::getMode() == SystemCall::simulatedRobot)
+                goto simRobotStandHigh; // Don't wait for the button in SimRobot
 
-      if(action_done) // chest button pressed and released
-        goto standUp;
+            if (action_done) // chest button pressed and released
+                goto standUp;
 
-      // Skip playDead state at a restart after a crash
-      else if(Global::getSettings().recover)
-        goto standUp;
+                // Skip playDead state at a restart after a crash
+            else if (Global::getSettings().recover)
+                goto standUp;
+        }
+        action{
+            SpecialAction(SpecialActionRequest::playDead);
+            ButtonPressedAndReleased(KeyStates::chest, 1000, 0);
+        }
     }
-    action
-    {
-      SpecialAction(SpecialActionRequest::playDead);
-      ButtonPressedAndReleased(KeyStates::chest, 1000, 0);
-    }
-  }
 
-  state(simRobotStandHigh)
-  {
-    transition
+    state(simRobotStandHigh)
     {
-      if(action_done)
-        goto playSoccer;
+        transition{
+            if (action_done)
+                goto playSoccer;
+        }
+        action{
+            LookForward();
+            SpecialAction(SpecialActionRequest::standHigh);
+        }
     }
-    action
-    {
-      LookForward();
-      SpecialAction(SpecialActionRequest::standHigh);
-    }
-  }
 
-  /** The robot stands up and starts to play when stand was executed. */
-  state(standUp)
-  {
-    transition
+    /** The robot stands up and starts to play when stand was executed. */
+    state(standUp)
     {
-      if(action_done)
-        goto playSoccer;
+        transition{
+            if (action_done)
+                goto playSoccer;
+        }
+        action{
+            LookForward();
+            Stand();
+        }
     }
-    action
-    {
-      LookForward();
-      Stand();
-    }
-  }
 
-  /**
-   * The main state that triggers the actual soccer behavior.
-   * It also checks whether the chest button was pressed.
-   */
-  state(playSoccer)
-  {
-    transition
+    /**
+     * The main state that triggers the actual soccer behavior.
+     * It also checks whether the chest button was pressed.
+     */
+    state(playSoccer)
     {
-      if(action_done) // chest button pressed and released once
-        goto waitForSecondButtonPress;
+        transition{
+            if (action_done) // chest button pressed and released once
+                goto waitForSecondButtonPress;
+        }
+        action{
+            HandlePenaltyState();
+            ButtonPressedAndReleased(KeyStates::chest, 1000, 200);
+        }
     }
-    action
-    {
-      HandlePenaltyState();
-      ButtonPressedAndReleased(KeyStates::chest, 1000, 200);
-    }
-  }
 
-  /** The following two states check whether the chest button is quickly pressed another two times. */
-  state(waitForSecondButtonPress)
-  {
-    transition
+    /** The following two states check whether the chest button is quickly pressed another two times. */
+    state(waitForSecondButtonPress)
     {
-      if(action_done) // chest button pressed and released for the second time
-        goto waitForThirdButtonPress;
-      else if(action_aborted) // too slow -> abort
-        goto playSoccer;
+        transition{
+            if (action_done) // chest button pressed and released for the second time
+                goto waitForThirdButtonPress;
+            else if (action_aborted) // too slow -> abort
+                goto playSoccer;
+        }
+        action{
+            HandlePenaltyState();
+            ButtonPressedAndReleased(KeyStates::chest, 1000, 200);
+        }
     }
-    action
-    {
-      HandlePenaltyState();
-      ButtonPressedAndReleased(KeyStates::chest, 1000, 200);
-    }
-  }
 
-  state(waitForThirdButtonPress)
-  {
-    transition
+    state(waitForThirdButtonPress)
     {
-      if(action_done) // chest button pressed and released for the third time
-        goto sitDown;
-      else if(action_aborted) // too slow -> abort
-        goto playSoccer;
+        transition{
+            if (action_done) // chest button pressed and released for the third time
+                goto sitDown;
+            else if (action_aborted) // too slow -> abort
+                goto playSoccer;
+        }
+        action{
+            HandlePenaltyState();
+            ButtonPressedAndReleased(KeyStates::chest, 1000, 200);
+        }
     }
-    action
-    {
-      HandlePenaltyState();
-      ButtonPressedAndReleased(KeyStates::chest, 1000, 200);
-    }
-  }
 
-  /** The robot sits down and turns off all joints afterwards. */
-  state(sitDown)
-  {
-    transition
+    /** The robot sits down and turns off all joints afterwards. */
+    state(sitDown)
     {
-      if(action_done)
-        goto playDeadDoNotRecover;
+        transition{
+            if (action_done)
+                goto playDeadDoNotRecover;
+        }
+        action{
+            LookForward();
+            SpecialAction(SpecialActionRequest::sitDown);
+        }
     }
-    action
-    {
-      LookForward();
-      SpecialAction(SpecialActionRequest::sitDown);
-    }
-  }
 
-  /** After pressing the chest button thrice we don't want the robot to recover */
-  state(playDeadDoNotRecover)
-  {
-    transition
+    /** After pressing the chest button thrice we don't want the robot to recover */
+    state(playDeadDoNotRecover)
     {
-      if(action_done)// chest button pressed and released
-        goto standUp;
+        transition{
+            if (action_done)// chest button pressed and released
+                goto standUp;
+        }
+        action{
+            SpecialAction(SpecialActionRequest::playDead);
+            ButtonPressedAndReleased(KeyStates::chest, 1000, 0);
+        }
     }
-    action
-    {
-      SpecialAction(SpecialActionRequest::playDead);
-      ButtonPressedAndReleased(KeyStates::chest, 1000, 0);
-    }
-  }
 }

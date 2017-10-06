@@ -22,4 +22,11 @@ public:
   
    //angle to the center point
   float angleToCenter;
+  
+  //angle to ball
+  float angleToBall;
+  
+  //
+  float odometryRSum;
+  float odometryXSum;
 };

@@ -25,6 +25,11 @@ void Role::draw() const
     static const ColorRGBA colors[numOfRoleTypes] =
     {
       ColorRGBA::black,
+      ColorRGBA::blue,
+      ColorRGBA::red,
+      ColorRGBA::white,
+      ColorRGBA::green,
+      ColorRGBA::yellow,
       ColorRGBA::black
     };
 

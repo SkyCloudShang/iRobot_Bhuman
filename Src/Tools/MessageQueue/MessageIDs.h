@@ -130,4 +130,9 @@ GLOBAL_ENUM(MessageID,
   idText,
   idUSRequest,
   idColorCalibration,
+   
+  //add by shangyunfei
+  idHasArrived,
+  idRoleType,
+  idTimeToReachBall,
 });

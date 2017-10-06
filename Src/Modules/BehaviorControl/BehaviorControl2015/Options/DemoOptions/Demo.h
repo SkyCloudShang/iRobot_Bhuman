@@ -34,7 +34,7 @@
 //}
 
 option(Demo)
-{
+{    
   initial_state(normalDoOwnRole)
   {
       transition
@@ -48,6 +48,7 @@ option(Demo)
          Stand();
       }
   }
+  
   
   state(judge)
   {
@@ -77,6 +78,7 @@ option(Demo)
       action
       {
           Keeper();
+         // Robot1();
       }
   }
   
@@ -85,6 +87,7 @@ option(Demo)
       action
       {
           Striker();
+          //Robot2();
       }
   }
   
@@ -92,6 +95,7 @@ option(Demo)
   {
       action
       {
+          //Stand();
           Supporter();
       }
   }

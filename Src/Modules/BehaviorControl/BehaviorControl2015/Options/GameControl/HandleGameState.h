@@ -86,7 +86,8 @@ option(HandleGameState)
     action
     {
       ArmContact();
-      PlayingState();
+     // PlayingState();
+      Demo();
     }
   }
 }

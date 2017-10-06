@@ -1,0 +1,46 @@
+motion_id = keeperBlockLeft
+" 
+ 
+"Keeper block the ball at his left side 
+"HP 	HT  AL1	AL2	AL3	AL4  AR1 AR2 AR3 AR4  LL0 LL1 LL2 LL3 LL4 LL5  	LR0	LR1 LR2 LR3 LR4 LR5  Int Dur   
+label start
+
+
+ stiffness 100 100 100 100 100 100 0 0 100 100 100 100 0 0 100 100 100 100 100 100 100 100 100 100 100 100 500
+
+"breitbeinig
+"HP HT  AL1	AL2	AL3	AL4  AR1 AR2 AR3 AR4  LL0 LL1 LL2 LL3 LL4 LL5  	LR0	LR1 LR2 LR3 LR4 LR5  Int Dur 
+ -  -   90 30  0   0 - -  90 -30   0   0 - -	  -45 18 -66  90 -10 -15   -45  20 -30  78 -30 -18	  1  150  
+transition standUpFrontNao standUpFrontNao start
+transition standUpBackNao standUpBackNao start
+   
+label stay
+"linken Fu ausstrecken
+"HP HT  AL1	AL2	AL3	AL4  AR1 AR2 AR3 AR4  LL0 LL1 LL2 LL3 LL4 LL5  	LR0	LR1 LR2 LR3 LR4 LR5  Int Dur 
+ -  -   100 25 30   0  - - 90 -30   0   0  - -  -  25 -66  0  65   -5     -  20  -15 123 -70  0	  1  150 
+transition standUpFrontNao standUpFrontNao start
+transition standUpBackNao standUpBackNao start
+ 
+"warten!
+"HP HT  AL1	AL2	AL3	AL4  AR1 AR2 AR3 AR4  LL0 LL1 LL2 LL3 LL4 LL5  	LR0	LR1 LR2 LR3 LR4 LR5  Int Dur 
+ -  -   100  25   30   0 - - 90 -30   0   0 - -  -  25 -66  0  65   -5     -  20  -15 123 -70  0	  1  2000  
+ 
+"So sollten die Gelenke ungef hr am Ende aussehen!!!
+"HP HT  AL1	 AL2	AL3	  AL4   AR1   AR2 AR3   AR4    LL0   LL1   LL2   LL3  LL4 LL5  	LR0	  LR1   LR2   LR3   LR4 LR5  Int Dur
+""-  -  -86.8   30.2   -12.5 -12.5  -92.8 14.1 1.7  -13.4  -43.4 -24.4 -66.2 -4.6 64.4 4.7  -43.4 15.5 -15.9 123.8  -70 3.9
+"-3.5-  -101.5  24.5   27.3  -0.8 -88.7   8.4 -12.5 -14.8 -47.3 -26.6 -67.2 -7.8 53.1 -1.7 -47.3 20.6 -14.6 123.8 -70.2 1.4 
+
+"Aufstehen
+"HP HT  AL1	AL2	AL3	AL4  AR1 AR2 AR3 AR4  LL0 LL1 LL2    LL3    LL4   LL5  	LR0	LR1 LR2 LR3 LR4 LR5  Int Dur 
+-   -   90  25   5 -3  - - 90  -30  -5  47 - - -49 42 -100.5 125.5 -1.4    0    -49  17  22 102 -70 6      1 500
+-   -   98  22   0 -20 - - 98  -22  0  10 - - -10  0  -60    120   -50     0    -10  0  -60 120 -50 0      1 500
+
+
+
+"Stehen
+-  - 	90 20 	0 0 - - 90  -20 0 0 - -	0 0.1 -18.1 37.4 -19.3 -0.1  0 0.1 -18.1 37.4 -19.3 -0.1 1 	800
+"-  	- 	-90	30 	0	0	-90 	30 	0	0	0 -1 -27 50 -25 1.8 0    -1 -27 50 -25 1.8	1  3000
+
+"transition keeperBlockLeft keeperBlockLeft stay
+
+transition allMotions extern start

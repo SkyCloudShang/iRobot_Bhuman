@@ -34,6 +34,8 @@
 #include "Options/Roles/Striker.h"
 #include "Options/Roles/Keeper.h"
 #include "Options/Roles/Supporter.h"
+#include "Options/Roles/Robot1.h"
+#include "Options/Roles/Robot2.h"
 
 #include "Options/DemoOptions/Demo.h"
 #include "Options/DemoOptions/Waving.h"

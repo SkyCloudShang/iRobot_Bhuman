@@ -22,6 +22,7 @@ MODULE(TeammateDataProvider,
   REQUIRES(MotionInfo),
   REQUIRES(OwnTeamInfo),
   REQUIRES(RobotInfo),
+  REQUIRES(RobotHealth),
   USES(MotionRequest),
   PROVIDES(UnfilteredTeammateData),
   PROVIDES(TeammateData),
@@ -29,7 +30,11 @@ MODULE(TeammateDataProvider,
   {,
     (int)(200) sendInterval, /** <  Time in ms between two messages that are sent to the teammates */
     (int)(4000) networkTimeout, /**< Time in ms after which teammates are considered as unconnected */
-  }),
+     //add by shangyunfei
+    (float)(0.2f) dropInSpeedOfRobot, /** < Speed of a DropIn Player in mm/ms*/
+    (float)(0.065f) dropInRotationSpeedOfRobot, /** < Rotation speed of a DropIn Player in degree/ms */
+    (float)(1000.f) dropInBonusForTheStriker, /** < the time bonus should stable the striker role */
+}),
 });
 
 /**
@@ -89,4 +94,5 @@ public:
    * @param teamReceiver The message queue containing all team messages received.
    */
   static void handleMessages(MessageQueue& teamReceiver);
+  
 };

@@ -48,9 +48,24 @@ STREAMABLE(BehaviorStatus,
   {,
     red,
     blue,
+  });
+  
+  ENUM(HUSTRole,
+  {,
+    undefined,
+    keeper,
+    striker,
+    defender,
+    supporter,
+    breakingsupporter,
+    none,
   }),
+          
 
   ((Role) RoleType)(undefined) role,
+  (bool)(false)firstRobotArrived,   //add by shangyunfei
   (Activity)(unknown) activity, /**< What is the robot doing in general? */
   (int)(-1) passTarget,
+  (HUSTRole)(undefined)roleType,    //add by shangyunfei
+  (float)(666.f)estimatedTimeToReachBall,   //add by shangyunfei
 });

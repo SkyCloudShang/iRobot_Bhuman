@@ -29,7 +29,7 @@ option(Supporter)
     {
         transition
         {
-            Vector2f robotFieldPos=Transformation::robotToField(theRobotPose,Vector2f(0.f,0.f));
+            Vector2f robotFieldPos=robotToField(theRobotPose,Vector2f(0.f,0.f));
             if(libCodeRelease.between(robotFieldPos.x(),1950.f,2050.f) &&
                 libCodeRelease.between(robotFieldPos.y(),-1050.f,-950.f))
                goto turnRobotToCenter;     

@@ -72,6 +72,7 @@
 #include <limits>
 #include <sstream>
 
+
 MODULE(BehaviorControl2015,
 {,
   REQUIRES(ActivationGraph),
@@ -118,6 +119,7 @@ MODULE(BehaviorControl2015,
   REQUIRES(RobotModel),
   REQUIRES(RobotPose),
   REQUIRES(Role),
+  REQUIRES(RobotHealth),
   REQUIRES(SideConfidence),
   REQUIRES(TeamBallModel),
   REQUIRES(TeamPlayersModel),

@@ -55,7 +55,12 @@ void TeamDataSender::update(TeamDataSenderOutput& teamDataSenderOutput)
     TEAM_OUTPUT(idWhistle, bin, theWhistle);
 
     TEAM_OUTPUT(idTeammateFieldCoverage, bin, FieldCoverageLineCompressed(theFieldCoverage[lineToSendNext++ % FieldCoverage::numOfCellsY]));
-
+    
+    //add by shangyunfei
+    TEAM_OUTPUT(idHasArrived,bin,theBehaviorStatus.firstRobotArrived);
+    TEAM_OUTPUT(idRoleType,bin,theBehaviorStatus.roleType);
+    TEAM_OUTPUT(idTimeToReachBall,bin,theBehaviorStatus.estimatedTimeToReachBall);
+    
     if(sendFrames % 20 == 0)
     {
       TEAM_OUTPUT(idRobotHealth, bin, theRobotHealth);

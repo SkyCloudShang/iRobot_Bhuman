@@ -13,6 +13,8 @@
 #endif
 #include "Tools/Cabsl.h" // include last, because macros might mix up other header files
 
+using namespace Transformation;
+
 namespace Behavior2015
 {
   /**
@@ -128,6 +130,8 @@ public:
   }
 
   ~BehaviorControl2015() {delete theBehavior;}
+  
 };
+
 
 MAKE_MODULE(BehaviorControl2015, behaviorControl)

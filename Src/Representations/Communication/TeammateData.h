@@ -17,6 +17,7 @@
 #include "Representations/Modeling/SideConfidence.h"
 #include "Representations/Modeling/Whistle.h"
 #include "Representations/Modeling/FieldCoverage.h"
+#include "Representations/Infrastructure/RobotHealth.h"
 
 /**
  * @struct Teammate
@@ -49,6 +50,10 @@ STREAMABLE(Teammate,
   (Whistle) whistle,                                  /**< Output of the WhistleRecognizer */
   (TeammateRoles) teammateRoles,                      /**< The Roles the teammates should use */
   (FieldCoverage::GridLine) fieldCoverageLine,        /**< The last Line of FieldCoverage this teammate sent */
+  (bool)firstRobotArrived,  //add by shangyunfei
+  ((BehaviorStatus) HUSTRole)teammateRoleType,    //add by shangyunfei     
+  (float)(999999.f) teammateTimeToReachBall,    //add by shangyunfei    
+  (RobotHealth)teammateHealth, //add by shangyunfei
 });
 
 /**
