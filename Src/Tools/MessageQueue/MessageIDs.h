@@ -1,0 +1,117 @@
+/**
+ * @file MessageIDs.h
+ *
+ * Declaration of ids for debug messages.
+ *
+ * @author Martin Lötzsch
+ */
+
+#pragma once
+
+#include "Tools/Streams/Enum.h"
+
+/**
+ * IDs for debug messages
+ *
+ * To distinguish debug messages, they all have an id.
+ */
+GLOBAL_ENUM(MessageID,
+{,
+  undefined,
+  idProcessBegin,
+  idProcessFinished,
+
+  idActivationGraph,
+  idAlternativeRobotPoseHypothesis,
+  idAnnotation,
+  idAudioData,
+  idBallModel,
+  idBallPercept,
+  idBallSpots,
+  idBehaviorStatus,
+  idBodyContour,
+  idCameraInfo,
+  idCameraMatrix,
+  idCirclePercept,
+  idDebuggingOutput,
+  idExternStrategyInput,
+  idFallDownState,
+  idFieldBoundary,
+  idFieldColors,
+  idFieldCoverage,
+  idFieldFeatureOverview,
+  idFootGroundContactState,
+  idFrameInfo,
+  idFsrSensorData,
+  idGameInfo,
+  idGoalPostPercept,
+  idGroundTruthOdometryData,
+  idGroundTruthWorldState,
+  idImage,
+  idImageCoordinateSystem,
+  idImagePatches,
+  idInertialData,
+  idInertialSensorData,
+  idJointAngles,
+  idJointCalibration,
+  idJointLimits,
+  idJointRequest,
+  idJointSensorData,
+  idJPEGImage,
+  idKeyStates,
+  idKickPose,
+  idLinesPercept,
+  idLowFrameRateImage,
+  idMotionInfo,
+  idMotionRequest,
+  idObstacleModel,
+  idOdometer,
+  idOdometryData,
+  idOpponentTeamInfo,
+  idOwnTeamInfo,
+  idPenaltyMarkPercept,
+  idPlayersFieldPercept,
+  idPlayersImagePercept,
+  idRobotDimensions,
+  idRobotHealth,
+  idRobotInfo,
+  idRobotPose,
+  idScanlineRegions,
+  idSelfLocalizationHypotheses,
+  idSideConfidence,
+  idSPLStandardBehaviorStatus,
+  idStableStand,
+  idStopwatch,
+  idSystemSensorData,
+  idTeamBallModel,
+  idTeamData,
+  idTeammateRoles,
+  idTeamPlayersModel,
+  idThumbnail,
+  idWhistle,
+  numOfDataMessageIDs, /**< everything below this does not belong into log files */
+
+  // infrastructure
+  idRobot = numOfDataMessageIDs,
+  idConsole,
+  idDebugDataChangeRequest,
+  idDebugDataResponse,
+  idDebugDrawing,
+  idDebugDrawing3D,
+  idDebugImage,
+  idDebugJPEGImage,
+  idDebugRequest,
+  idDebugResponse,
+  idDrawingManager,
+  idDrawingManager3D,
+  idLogResponse,
+  idModuleRequest,
+  idModuleTable,
+  idMotionNet,
+  idPlot,
+  idQueueFillRequest,
+  idRobotname,
+  idStreamSpecification,
+  idText,
+  idColorCalibration,
+});

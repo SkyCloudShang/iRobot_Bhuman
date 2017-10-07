@@ -1,0 +1,345 @@
+#!/bin/bash
+# copies a bhuman distribution to a robot
+
+usage()
+{
+  echo "usage: copyfiles [Release|Develop|Debug] [<ipaddress>|(-r <playernumber> <ipaddress>)*] {options}"
+  echo "  options:"
+  echo "    -b                     restart bhuman"
+  echo "    -c <color>             set team color to blue, red, yellow, black, white, orange, purple, brown, or gray"
+  echo "    -d                     delete all log files before copying"
+  echo "    -h | --help | /h | /?  print this text"
+  echo "    -l <location>          set location"
+  echo "    -m <number>            set magic number for teamcomm (0-255). Set -1 for random."
+  echo "    -n                     stop NAOqi"
+  echo "    -nc                    never compile"
+  echo "    -nr                    do not check whether target is reachable"
+  echo "    -o <port>              overwrite team port"
+  echo "    -p <number>            set player number"
+  echo "    -r <n> <ip>            copy to <ip>, and set playernumber to <n> (one -r per robot)"
+  echo "    -s <scenario>          set scenario"
+  echo "    -t <number>            set team number"
+  echo "    -v <percent>           set NAO's volume"
+  echo "    -w <profile>           set wireless profile"
+  echo "  examples:"
+  echo "    ./copyfiles Develop 192.168.5.14 -p 1"
+  echo "    ./copyfiles Release -r 1 10.0.5.14 -r 3 10.0.0.2"
+  echo "  Without -n, NAOqi will be restarted if libbhuman or libgamectrl were changed."
+  exit 1
+}
+
+copy()
+{
+  REMOTE=$1
+  PLAYER=$2
+
+  if [ ! -z $PLAYER ] && ( (( $PLAYER < 1 )) || (( $PLAYER > 6 )) ); then
+    echo "Error: Player number is $PLAYER!"
+    exit 1
+  fi
+
+  if [ ! -z $CHECK ]; then
+    if [ `ping ${pingoptions} $REMOTE >/dev/null && echo 1 || echo 0` = "0" ]; then
+      echo "$REMOTE not reachable"
+      exit 1
+    fi
+  fi
+
+  echo "stopping bhuman"
+  ssh $sshoptions nao@$REMOTE "/home/nao/bin/bhumand stop > /dev/null"
+
+  if [ ! -z $STOPNAOQI ]; then
+    echo "stopping naoqi"
+    ssh $sshoptions nao@$REMOTE "sudo /etc/init.d/naoqi stop &> /dev/null"
+  fi
+
+  if [ ! -z $DELETELOGS ]; then
+    echo "removing log files"
+    ssh $sshoptions nao@$REMOTE "rm -f /home/nao/logs/* /tmp/bhumand.log > /dev/null"
+  fi
+
+  echo "updating wireless profiles"
+  rsync --del --exclude=.* --exclude=default --chmod=u+rw,go+r,Dugo+x -zrce "ssh $sshoptions" ../../Install/Network/Profiles/. nao@$REMOTE:/home/nao/Profiles
+  #check if PROFILE is existent
+  if [ -n "$PROFILE" ]; then
+    if [ ! -r "../../Install/Network/Profiles/$PROFILE" ]; then
+      echo "wireless profile \"$PROFILE\" is not existent, that profile is not activated" >&2
+    else
+      RESULT=`ssh $sshoptions nao@$REMOTE "setprofile $PROFILE"`
+      if [ -n "$RESULT" ]; then
+        if [ "$PROFILE" == "NONE" ] || [ `echo $RESULT | grep -i -c 'no process found'` -eq "1" ]; then
+          RESULT=""
+        fi
+      fi
+      if [ ! -z "$RESULT" ]; then
+        echo "$RESULT" | grep -v usage >&2
+        exit 1
+      fi
+    fi
+  fi
+
+  echo "updating bhuman"
+  rsync --del --exclude=.* --exclude=/Images --exclude=/Logs --exclude=/Scenes --exclude=/Keys --exclude=libbhuman.so --exclude=libgamectrl.so --chmod=u+rw,go+r,Dugo+x -rzce "ssh $sshoptions" ../../Build/Linux/$COMPONENT/$CONFIG/bhuman ../../Config/. nao@$REMOTE:/home/nao/Config
+
+  echo "updating libs"
+  RESULT=`rsync --chmod=u+rw,go+r,Dugo+x --stats -zce "ssh $sshoptions" ../../Build/Linux/libbhuman/$CONFIG/libbhuman.so ../../Build/Linux/libgamectrl/$CONFIG/libgamectrl.so nao@$REMOTE:/home/nao/Config`
+  if [ `echo "$RESULT" | grep -c 'transferred: 0'` != 1 -a -z "$STOPNAOQI" ]; then
+    RESTARTNAOQI=1
+  fi
+
+  if [ ! -z $RESTARTNAOQI ]; then
+    echo "restarting naoqi"
+    ssh $sshoptions nao@$REMOTE "sudo /etc/init.d/naoqi restart &> /dev/null"
+  fi
+
+  # set volume
+  echo "setting volume to $VOLUME%"
+
+  #New naoqi versions use "Master", old use "PCM" as amixer SCONTROL
+  ssh $sshoptions nao@$REMOTE "amixer set Master $VOLUME% unmute &> /dev/null"
+
+  #reset capture volume to 100%
+  ssh $sshoptions nao@$REMOTE "amixer set Capture 100% unmute &> /dev/null"
+
+  #check if magic number is too big
+  if [ ! -z $MAGICNUMBER ]; then
+    if [ $MAGICNUMBER -gt 255 ]; then
+      MAGICNUMBER=255
+    fi
+    #calculate random magic number
+    if [ $MAGICNUMBER -le -1 ]; then
+      MAGICNUMBER=$(awk 'BEGIN{srand();print int(rand()*255) }')
+    fi
+
+    echo "setting magic number to $MAGICNUMBER"
+  fi
+
+  # set settings on robot
+  if [ ! -z $SCENARIO ] || [ ! -z $LOCATION ] || [ ! -z $TEAM ] || [ ! -z $PORT ] || [ ! -z $PLAYER ] || [ ! -z $NUMBER ] || [ ! -z $MAGICNUMBER ]; then
+    echo "updating settings"
+    SEDFLAGS=""
+    [ ! -z $SCENARIO ] && SEDFLAGS="$SEDFLAGS -e 's/scenario.*/scenario = $SCENARIO;/'"
+    [ ! -z $LOCATION ] && SEDFLAGS="$SEDFLAGS -e 's/location.*/location = $LOCATION;/'"
+    [ ! -z $TEAM ] && SEDFLAGS="$SEDFLAGS -e 's/teamColor.*/teamColor = $TEAM;/'"
+    [ ! -z $PLAYER ] && SEDFLAGS="$SEDFLAGS -e 's/playerNumber.*/playerNumber = $PLAYER;/'"
+    [ ! -z $NUMBER ] && SEDFLAGS="$SEDFLAGS -e 's/teamNumber.*/teamNumber = $NUMBER;/'"
+    [ ! -z $PORT ] && SEDFLAGS="$SEDFLAGS -e 's/teamPort.*/teamPort = $PORT;/'"
+    [ ! -z $MAGICNUMBER ] && SEDFLAGS="$SEDFLAGS -e 's/magicNumber.*/magicNumber = $MAGICNUMBER;/'"
+    ssh $sshoptions nao@$REMOTE "sed $SEDFLAGS < /home/nao/Config/settings.cfg > /home/nao/Config/settingsTEMP.cfg && mv /home/nao/Config/settingsTEMP.cfg /home/nao/Config/settings.cfg"
+  fi
+
+  if [ ! -z $RESTART ]; then
+    if [ -z $RESTARTNAOQI ]; then
+      RESULT=`ssh $sshoptions nao@$REMOTE "/etc/init.d/naoqi status | grep started"` || true
+      if [ -z "$RESULT" ]; then
+        echo "starting naoqi"
+        ssh $sshoptions nao@$REMOTE "sudo /etc/init.d/naoqi start &> /dev/null"
+      fi
+    fi
+    echo "starting bhuman"
+    ssh $sshoptions nao@$REMOTE "/home/nao/bin/bhumand start > /dev/null"
+  fi
+
+  true
+}
+
+set -e
+
+scriptPath=$(echo $0 | sed "s|^\.\./|`pwd`/../|" | sed "s|^\./|`pwd`/|")
+basePath=$(dirname "${scriptPath}")
+currPath=$(pwd)
+keySource=../../Config/Keys/id_rsa_nao
+keyFile=/tmp/id_rsa_nao
+sshoptions="-c arcfour -i $keyFile -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=quiet"
+if [[ $(uname) == *CYGWIN* ]]; then
+  pingoptions="-w 1 -n 1"
+elif [ $(uname) == "Darwin" ]; then
+  pingoptions="-t 1 -c 1"
+else
+  pingoptions="-w 1 -c 1"
+fi
+
+cd "${basePath}"
+cp $keySource $keyFile
+
+# init variables
+[ -z $CONFIG ] && CONFIG="Develop"
+COMPONENT="Nao"
+PLAYER=
+TEAM=
+NUMBER=
+SCENARIO=
+LOCATION=
+REMOTE=
+COMPILE=1
+CHECK=1
+NUMMULTIPLE=0
+RESTARTNAOQI=
+STOPNAOQI=
+MULTIPLEDATA=
+DELETELOGS=
+VOLUME=100
+PROFILE=
+PORT=
+MAGICNUMBER=
+
+# parse options
+[ "x" = "x$*" ] && usage
+while true; do
+  case $1 in
+    "")
+      break
+      ;;
+    "-p" | "/p")
+      shift
+      PLAYER=$1
+      ;;
+    "-s" | "/s")
+      shift
+      SCENARIO=$1
+      ;;
+    "-l" | "/l")
+      shift
+      LOCATION=$1
+      ;;
+    "-c" | "/c")
+      shift
+      TEAM=$1
+      ;;
+    "-t" | "/t")
+      shift
+      NUMBER=$1
+      if [ -z $PORT ]; then
+        PORT=`printf "100%02d" $NUMBER`
+      fi
+      ;;
+    "-o" | "/o")
+      shift
+      PORT=$1
+      ;;
+    "-nc" | "/nc")
+      COMPILE=
+      ;;
+    "-b" | "/b")
+      RESTART=1
+      ;;
+    "-n" | "/n")
+      STOPNAOQI=1
+      ;;
+    "-nr" | "/nr")
+      CHECK=
+      ;;
+    "-d" | "/d")
+      DELETELOGS=1
+      RESTART=1
+      ;;
+    "-h" | "/h" | "/?" | "--help")
+      usage
+      ;;
+    "-r" | "/r")
+      shift
+      MULTIPLEDATA[$NUMMULTIPLE]=$1
+      shift
+      MULTIPLEDATA[$NUMMULTIPLE + 1]=$1
+      let "NUMMULTIPLE+=2"
+      ;;
+    "-v" | "/v")
+      shift
+      VOLUME=$1
+      ;;
+    "-w" | "/w")
+      shift
+      PROFILE=$1
+      ;;
+    "-m" | "/m")
+      shift
+      MAGICNUMBER=$1
+      ;;
+    "Nao")
+      COMPONENT="Nao"
+      ;;
+    "Release")
+      CONFIG="Release"
+      ;;
+    "Develop")
+      CONFIG="Develop"
+      ;;
+    "Debug")
+      CONFIG="Debug"
+      ;;
+    -*)
+      echo "unknown parameter: $1"
+      usage
+      ;;
+    *)
+      REMOTE=$1
+      ;;
+  esac
+  shift
+done
+
+if [ ! -z $SCENARIO ]; then
+  if [ "$(ls ../../Config/Scenarios/ | grep ${SCENARIO})" == "" ]; then
+    if [ "$(ls ../../Config/Scenarios/ | grep -i ${SCENARIO})" != "" ]; then
+      echo "Scenario $SCENARIO is not present"
+      LOCATION="$(ls ../../Config/Scenarios/ | grep -i ${SCENARIO})"
+      echo "Did you mean $SCENARIO?"
+      echo "Now using $SCENARIO"
+    else
+      echo "Scenario \"$SCENARIO\" is not present"
+      exit 1
+    fi
+  fi
+fi
+
+if [ ! -z $LOCATION ]; then
+  if [ "$(ls ../../Config/Locations/ | grep ${LOCATION})" == "" ]; then
+    if [ "$(ls ../../Config/Locations/ | grep -i ${LOCATION})" != "" ]; then
+      echo "Location $LOCATION is not present"
+      LOCATION="$(ls ../../Config/Locations/ | grep -i ${LOCATION})"
+      echo "Did you mean $LOCATION?"
+      echo "Now using $LOCATION"
+    else
+      echo "Location \"$LOCATION\" is not present"
+      exit 1
+    fi
+  fi
+fi
+
+#key may only be accessed by the owner. Otherwise ssh will complain
+chmod 600 $keyFile
+
+if [ ! -z $COMPILE ]; then
+  if [ "`uname`" = "Darwin" ]; then
+    # macOS
+    ./compile $COMPONENT $CONFIG
+    [ $? -ne 0 ] && exit 1
+  elif [ -z "${ComSpec}${COMSPEC}" ]; then
+    # Linux
+    make $COMPONENT CONFIG=$CONFIG
+    [ $? -ne 0 ] && exit 1
+  else
+    # Windows
+    echo "------ Compiling $COMPONENT ($CONFIG) ------"
+    ../../Util/SimRobot/Util/mare/Windows/bin/mare.exe ${COMPONENT} CONFIG=${CONFIG}
+    [ $? -ne 0 ] && exit 1
+    echo "------ Successfully compiled ------"
+  fi
+fi
+
+if [ ! -z $REMOTE ]; then
+  copy $REMOTE $PLAYER
+else # try to deploy to multiple targets
+  if [ "$NUMMULTIPLE" -ne 0 ]; then
+    for ((i=0; i < NUMMULTIPLE; i+=2))
+    do
+      copy ${MULTIPLEDATA[i+1]} ${MULTIPLEDATA[i]} | sed "s%^%[${MULTIPLEDATA[i+1]}] %" &
+    done
+    wait
+  else
+    cd "${currPath}"
+    exit 1
+  fi
+fi
+
+cd "${currPath}"

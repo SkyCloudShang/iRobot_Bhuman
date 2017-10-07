@@ -1,0 +1,22 @@
+#!/bin/sh
+
+FLAGS=$1
+DIR=/home/nao
+
+usage()
+{
+  echo "usage: $0 [<flags>] - Starts the last deployed bhuman version."
+  exit 1
+}
+
+if [ $(whoami) != nao ]; then
+  echo "bhuman can only be started by user 'nao'."
+  exit 1
+fi
+
+# this should fix a freaky cygwin bug
+if [ ! -x "$DIR/Config/bhuman" ]; then
+  chmod u+x "$DIR/Config/bhuman" || exit
+fi
+
+stdbuf -o0 "$DIR/Config/bhuman" -c "$DIR" -w $FLAGS 2>&1 | stdbuf -o0 awk -F '\n' '{ print strftime("%H:%M:%S" , systime()) " " $0}' | tee --append /tmp/bhumand.log

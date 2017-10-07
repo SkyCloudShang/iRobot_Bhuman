@@ -1,0 +1,162 @@
+SimulatedNao = cppDynamicLibrary + {
+  dependencies = { "Controller", "qtpropertybrowser", "libqxt" }
+
+  root = "$(srcDirRoot)"
+
+  precompiledHeader = {
+    "$(srcDirRoot)/Tools/Precompiled/BHumanPch.h"
+  }
+
+  files = {
+    "$(srcDirRoot)/Modules/**.cpp" = bhCppSource
+    "$(srcDirRoot)/Modules/**.h"
+    "$(srcDirRoot)/Platform/$(OS)/*.cpp" = bhCppSource
+    "$(srcDirRoot)/Platform/$(OS)/*.h"
+    "$(srcDirRoot)/Platform/SimulatedNao/*.cpp" = bhCppSource
+    "$(srcDirRoot)/Platform/SimulatedNao/*.h"
+    "$(srcDirRoot)/Platform/*.cpp" = bhCppSource
+    "$(srcDirRoot)/Platform/*.h"
+    "$(srcDirRoot)/Processes/**.cpp" = bhCppSource
+    "$(srcDirRoot)/Processes/**.h"
+    "$(srcDirRoot)/Representations/**.cpp" = bhCppSource
+    "$(srcDirRoot)/Representations/**.h"
+    "$(srcDirRoot)/Tools/**.cpp" = bhCppSource
+    "$(srcDirRoot)/Tools/**.h"
+    -"$(srcDirRoot)/Tools/Precompiled/ControllerPch.*"
+  }
+  files += pchFiles
+
+  defines += {
+    "TARGET_SIM"
+    if (host == "Win32") {
+      "_CRT_SECURE_NO_DEPRECATE"
+    }
+    if (configuration == "Develop") {
+      -"NDEBUG"
+    }
+    if (configuration != "Debug") {
+      "QT_NO_DEBUG"
+    }
+  }
+
+  includePaths = {
+    "$(srcDirRoot)"
+    "$(utilDirRoot)/Eigen"
+    "$(utilDirRoot)/GameController/include"
+    "$(utilDirRoot)/fftw-3.3"
+    "$(utilDirRoot)/libjpeg/src"
+    "$(utilDirRoot)/libqxt"
+    "$(utilDirRoot)/qtpropertybrowser"
+    "$(utilDirRoot)/SimRobot/Src/SimRobot"
+    "$(utilDirRoot)/SimRobot/Src/SimRobotCore2"
+    "$(utilDirRoot)/SimRobot/Src/SimRobotEditor"
+    "$(utilDirRoot)/snappy/include"
+    if (host == "Win32") {
+      "$(utilDirRoot)/SimRobot/Util/qt/Windows/include"
+      "$(utilDirRoot)/SimRobot/Util/qt/Windows/include/QtCore"
+      "$(utilDirRoot)/SimRobot/Util/qt/Windows/include/QtGui"
+      "$(utilDirRoot)/SimRobot/Util/qt/Windows/include/QtOpenGL"
+      "$(utilDirRoot)/SimRobot/Util/qt/Windows/include/QtWidgets"
+      "$(utilDirRoot)/SimRobot/Util/glew/Windows/include"
+      "$(utilDirRoot)/Buildchain/Windows/include"
+    } else if (platform == "Linux") {
+      "$(buildDir)"
+      "$(qtinclude)"
+      "$(qtinclude)/QtCore"
+      "$(qtinclude)/QtGui"
+      "$(qtinclude)/QtOpenGL"
+      "$(qtinclude)/QtWidgets"
+      "$(utilDirRoot)/SimRobot/Util/ode/Linux/include"
+    }
+  }
+
+  libPaths = {
+    "$(buildPlatformDir)/Controller/$(configuration)"
+    "$(buildPlatformDir)/qtpropertybrowser/$(configuration)"
+    "$(buildPlatformDir)/libqxt/$(configuration)"
+    if (platform == "Linux") {
+      "$(utilDirRoot)/fftw-3.3/Linux64"
+      "$(utilDirRoot)/libjpeg/lib/Linux"
+      "$(utilDirRoot)/snappy/lib/Linux/x64"
+    } else if (host == "Win32") {
+      "$(utilDirRoot)/fftw-3.3/Windows"
+      "$(utilDirRoot)/SimRobot/Util/qt/Windows/lib"
+      "$(utilDirRoot)/libjpeg/lib/Windows"
+      "$(utilDirRoot)/snappy/lib/Windows"
+    }
+  }
+
+  libs = {
+    "Controller", "qtpropertybrowser", "qxt"
+    if (host == "Win32") {
+      if (configuration == "Debug") {
+        "Qt5Cored", "Qt5Guid", "Qt5OpenGld", "Qt5Svgd", "Qt5Widgetsd"
+        "snappyd"
+      } else {
+        "Qt5Core", "Qt5Gui", "Qt5OpenGl", "Qt5Svg", "Qt5Widgets"
+        "snappy"
+      }
+      "winmm", "opengl32", "glu32", "ws2_32", "libjpeg", "libfftw3-3"
+    } else if (platform == "Linux") {
+      "Qt5Core", "Qt5Gui", "Qt5Network", "Qt5OpenGL", "Qt5Svg", "Qt5Widgets"
+      "rt", "pthread", "GLEW", "GLU", "GL", "fftw3", "jpeg", "snappy"
+    }
+  }
+
+  cppFlags += {
+    if (tool == "vcxproj") {
+      "/Zm200"
+      if (avx2 == "true" ) {
+        "/arch:AVX2"
+      } else {
+        "/arch:AVX"
+      }
+      if (configuration == "Develop") {
+        -"/Ox"
+        "/Od /ZI"
+      } else if (configuration == "Release") {
+        "/wd4101 /GS-"
+      }
+    } else {
+      "-mmmx -msse -msse2"
+      if (ssse3 == "true") {
+        "-msse3 -mssse3"
+      }
+      if (avx2 == "true") {
+        "-mavx -mavx2"
+      }
+      "-Wno-switch" // deactivating this is a problem because of the ENUM macro, since numOf<ENUM>s is never used in switch.
+      "-Wconversion"
+      "-Wno-sign-conversion"
+      if (configuration == "Develop") {
+        -"-O3 -fomit-frame-pointer", "-g"
+      }
+    }
+  }
+
+  linkFlags += {
+    //the rpath specifies a searchpath for dynamic libraries.
+    if (platform == "Linux") {
+      " -Wl,-rpath -Wl,${ORIGIN}"
+    } else if (platform == "MacOSX"){
+      " -Wl,-rpath -Wl,${ORIGIN}/../Resources/"
+    }
+    if (tool == "vcxproj") {
+      if (configuration == "Debug") {
+        "/NODEFAULTLIB:msvcrt.lib"
+      } else if (configuration == "Develop") {
+        "/INCREMENTAL /DEBUG /SAFESEH:NO"
+        -"/OPT:REF /OPT:ICF"
+      }
+    } else {
+      if (configuration == "Develop") {
+        -"-s"
+      }
+    }
+  }
+
+  visualizers = {
+    "$(utilDirRoot)/Buildchain/Windows/Visualizers/Angle.natvis"
+    "$(utilDirRoot)/Eigen/debug/msvc/eigen.natvis"
+  }
+}
