@@ -106,7 +106,7 @@ representationProviders = [
   {representation = RobotInfo; provider = NaoProvider;},
   {representation = RobotModel; provider = RobotModelProvider;},
   {representation = RobotPose; provider = SelfLocator;},
-  {representation = Role; provider = BehaviorControl2015;},
+  {representation = Role; provider = default;},
   {representation = ScanGrid; provider = ScanGridProvider;},
   {representation = SelfLocalizationHypotheses; provider = SelfLocator;},
   {representation = SideConfidence; provider = ExpSideConfidenceProvider;},
