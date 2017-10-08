@@ -10,8 +10,9 @@
 输入指令```git config --global user.name "xxx"```和 ```git config --global user.eamil ```"你的邮箱地址".
 
 以上两步,即完成了ubuntu上的git安装.若想通过ssh的方式与github进行连接,则还需单独配置公钥密钥.本项目暂不需要,本处略过.
-
-
+<br>
+<br>
+<br>
 
 关于本工程:iRobot_Bhuman代码,按照以下方法来进行下载,编译
 ---
@@ -20,12 +21,15 @@
 #2,在新建的“Bhuman”文件夹下，执行：```git init```创建一个空的git repository或重新初始化一个现有的
 
 #3,进到此文件夹下,打开终端,执行:```git clone https://github.com/SkyCloudShang/iRobot_Bhuman.git```
-此时,终端会要求输入用户名和密码,输入自己在github的用户名和密码,即可开始从github上下载源代码
+此时,终端会要求输入用户名和密码,输入自己在github的用户名和密码,即可开始从github上下载源代码.ps:由于现在此仓库中有两个发布版本：iRobot_Bhuman2016和iRobot_Bhuman2017,默认的master分支是iRobot_Bhuman2017,若想下载2016版本的代码，请使用命令：```git clone -branch iRobot_Bhuman2016 https://github.com/SkyCloudShang/iRobot_Bhuman.git```.
 
-#4,下载完成后,即可开始进行编译.编译demo请参阅CodeRelease2016.pdf文档,需要用到的命令可在Tools文件夹中查阅.
+#4,下载完成后,即可开始进行编译.编译demo请参阅CodeRelease2017.pdf文档,需要用到的命令可在Tools文件夹中查阅.
 其中,2.3.4.1小结中的Alcommon在这份demo中已经安装,不需再单独安装.那步不用管.其余部分都需按照文档执行.
 
 #5,编译完成后,相关的校准等步骤的相关指令也放在Tools文件夹中,供大家查阅.
+<br>
+<br>
+<br>
 
 
 必会技能!所有成员务必按照以下顺序来更新上传代码!
@@ -42,7 +46,11 @@
 #4,以上第2步通过了之后,再在工程文件夹Bhuman/iRobot_Bhuman文件夹下,执行```git add .```指令,这条指令是将你当前文件夹下所有修改过的文件都加到暂存区.在执行这条指令前,
 可以先用```git status```指令和```git diff XXX```指令查看当前的代码和服务器上的代码有什么不同,方便知道哪些要add,哪些不用add.
 
-#5,同样的目录下，执行```git commit -m "增加了..."```指令,这条指令中双引号括起来的部分将在github上能直接反应出来.方便让别人知道此次更新,你做了什么事情.
-增加了哪些功能.
+#5,同样的目录下，执行```git commit -m "update..."```指令,这条指令中双引号括起来的部分将在github上能直接反应出来.方便让别人知道此次更新,你做了什么事情.增加了哪些功能.
 
 #6,同样的目录下，执行```git push origin master```指令,最后的一条指令,往服务器上推送代码.执行完,即将代码上传到github.其他团队成员也可见.
+<br>
+<br>
+<br>
+*PS:所有成员，务必进Tools文件夹，参见iRobot团队开发规范文件，进行相应的设置！谢谢！*
+
