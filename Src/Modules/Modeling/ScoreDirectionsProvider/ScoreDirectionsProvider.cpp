@@ -56,17 +56,7 @@ void ScoreDirectionsProvider::update(ScoreDirections& scoreDirections)
       {
         edges.push_back(Edge(distance, right, 1));
         edges.push_back(Edge(distance, left, -1));
-//        COMPLEX_DRAWING("module:ScoreDirectionsProvider:sectors",
-//        {
-//          const Vector2f points[3] =
-//          {
-//            theBallModel.estimate.position,
-//            Pose2D(right - theRobotPose.rotation) * DRAWING_EDGE + theBallModel.estimate.position,
-//            Pose2D(left - theRobotPose.rotation) * DRAWING_EDGE + theBallModel.estimate.position
-//          };
-//          POLYGON("module:ScoreDirectionsProvider:sectors",
-//                  3, points, 0, Drawings::PenStyle::noPen, ColorRGBA(), Drawings::PenStyle::solidPen, ColorRGBA(255, 0, 0, 64));
-//        });
+
       }
     }
   }
@@ -136,3 +126,5 @@ void ScoreDirectionsProvider::update(ScoreDirections& scoreDirections)
    }
 
 }
+
+MAKE_MODULE(ScoreDirectionsProvider, modeling)

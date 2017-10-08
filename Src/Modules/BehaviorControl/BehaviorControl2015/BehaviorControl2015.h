@@ -37,6 +37,7 @@
 #include "Representations/Modeling/Odometer.h"
 #include "Representations/Modeling/RobotPose.h"
 #include "Representations/Modeling/SideConfidence.h"
+#include "Representations/Modeling/ScoreDirections.h"
 #include "Representations/Modeling/TeamBallModel.h"
 #include "Representations/Modeling/TeammateReliability.h"
 #include "Representations/Modeling/TeamPlayersModel.h"
@@ -121,6 +122,7 @@ MODULE(BehaviorControl2015,
   REQUIRES(Role),
   REQUIRES(RobotHealth),
   REQUIRES(SideConfidence),
+  REQUIRES(ScoreDirections),
   REQUIRES(TeamBallModel),
   REQUIRES(TeamPlayersModel),
   REQUIRES(TeammateData),
