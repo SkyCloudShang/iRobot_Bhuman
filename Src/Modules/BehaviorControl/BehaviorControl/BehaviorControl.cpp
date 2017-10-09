@@ -45,3 +45,4 @@ void BehaviorControl::update(ActivationGraph& activationGraph)
 }
 
 MAKE_MODULE(BehaviorControl, behaviorControl)
+
