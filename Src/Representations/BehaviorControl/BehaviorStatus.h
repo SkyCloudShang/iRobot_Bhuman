@@ -48,6 +48,7 @@ STREAMABLE(BehaviorStatus, COMMA public BHumanMessageParticle<idBehaviorStatus>
   (Activity)(unknown) activity, /**< What is the robot doing in general? */
   (TimeToReachBall) timeToReachBall,
   (int)(-1) passTarget,
+  (int)(0)firstRobotArrived,//add by Shangyunfei
 });
 
 inline void BehaviorStatus::operator >> (BHumanMessage& m) const
@@ -57,6 +58,7 @@ inline void BehaviorStatus::operator >> (BHumanMessage& m) const
   m.theBHumanArbitraryMessage.queue.out.finishMessage(id());
   timeToReachBall >> m;
   m.theBHULKsStandardMessage.passTarget = static_cast<int8_t>(passTarget);
+  m.theBHumanStandardMessage.firstRobotArrived=static_cast<int8_t>(firstRobotArrived);
 
   m.theBHULKsStandardMessage.kingIsPlayingBall = Role::toBHulksRole(role) == B_HULKs::Role::King&&
       (activity == BehaviorStatus::goToBall || activity == BehaviorStatus::kick || activity == BehaviorStatus::duel);
@@ -68,6 +70,7 @@ inline void BehaviorStatus::operator << (const BHumanMessage& m)
   activity = m.theBHULKsStandardMessage.kingIsPlayingBall && m.theBSPLStandardMessage.playerNum == 1 ? BehaviorStatus::goToBall : unknown;
   timeToReachBall << m;
   passTarget = static_cast<int>(m.theBHULKsStandardMessage.passTarget);
+  firstRobotArrived=static_cast<int>(m.theBHumanStandardMessage.firstRobotArrived);
 }
 
 inline bool BehaviorStatus::handleArbitraryMessage(InMessage& m, const std::function<unsigned(unsigned)>& toLocalTimestamp)

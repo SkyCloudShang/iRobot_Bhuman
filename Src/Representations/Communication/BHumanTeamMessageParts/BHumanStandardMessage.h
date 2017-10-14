@@ -48,4 +48,5 @@ STREAMABLE(BHumanStandardMessage,
   (float) robotPoseDeviation,
   (std::array<float, 6>) robotPoseCovariance,
   (uint8_t) robotPoseValidity,
+  (uint8_t) firstRobotArrived,
 });

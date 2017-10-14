@@ -11,4 +11,12 @@ STREAMABLE(LibCodeRelease,
   
   (float) angleToGoal,
   (int) timeSinceBallWasSeen,
+          
+  //add by Shangyunfei        
+  (float)angleToCenter,
+         
+  (float)angleToBall,        
+          
+  (float)odometryRSum,
+  (float)odometryXSum,
 });

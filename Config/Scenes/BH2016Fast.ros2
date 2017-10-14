@@ -18,11 +18,12 @@
         <Translation x="0.9" z="320mm"/>
         <Rotation z="180degree"/>
       </Body>
-<!--
       <Body ref="Nao" name="robot1">
         <Translation x="2.8" y="0" z="320mm"/>
         <Rotation z="180degree"/>
       </Body>
+<!--
+     
       <Body ref="Nao" name="robot3">
         <Translation x="0.3" y="-1" z="320mm"/>
         <Rotation z="180degree"/>

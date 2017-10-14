@@ -22,7 +22,8 @@ int BHumanStandardMessage::sizeOfBHumanMessage() const
          + sizeof(ballCovariance)
          + sizeof(robotPoseDeviation)
          + sizeof(robotPoseCovariance)
-         + sizeof(robotPoseValidity);
+         + sizeof(robotPoseValidity)
+          +sizeof(firstRobotArrived);
 }
 
 void BHumanStandardMessage::write(void* data) const
@@ -49,6 +50,7 @@ void BHumanStandardMessage::write(void* data) const
 
   *reinterpret_cast<std::array<float, 6>*&>(data)++ = robotPoseCovariance;
   *reinterpret_cast<uint8_t*&>(data)++ = robotPoseValidity;
+  *reinterpret_cast<uint8_t*&>(data)++ = firstRobotArrived;
 
   ASSERT((reinterpret_cast<char*>(data) - reinterpret_cast<const char* const>(begin)) == sizeOfBHumanMessage());
 }
@@ -79,6 +81,7 @@ bool BHumanStandardMessage::read(const void* data)
 
   robotPoseCovariance = *reinterpret_cast<const std::array<float, 6>*&>(data)++;
   robotPoseValidity = *reinterpret_cast<const uint8_t*&>(data)++;
+  firstRobotArrived=*reinterpret_cast<const uint8_t*&>(data)++;
 
   return true;
 }

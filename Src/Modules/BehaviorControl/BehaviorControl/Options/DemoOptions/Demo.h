@@ -1,40 +1,112 @@
-/**
- * @file Demo.h
- *
- * @author <a href="mailto:jesse@tzi.de">Jesse Richter-Klug</a>
- */
+//option(Demo)
+//{
+//  common_transition
+//  {
+//    switch(libDemo.demoGameState)
+//      {
+//      case LibDemo::wavingPlinking:
+//        goto waving;
+//      case LibDemo::normal:
+//        goto normal;
+//      default:
+//        ASSERT(false);
+//        break;
+//    }
+//  }
+//
+//  initial_state(normal)
+//  {
+//    action
+//    {
+//      Striker();
+//      LookForward();
+//    }
+//  }
+//
+//  state(waving)
+//  {
+//    action
+//    {
+//      LookForward();
+//      Waving();
+//    }
+//  }
+//}
 
 option(Demo)
-{
-  common_transition
+{    
+  initial_state(normalDoOwnRole)
   {
-    switch(theLibDemo.demoGameState)
+      transition
+      {
+          if(state_time>1000)
+              goto judge;
+      }
+      action
+      {
+         LookForward();
+         Stand();
+      }
+  }
+  
+  
+  state(judge)
+  {
+    transition
     {
-      case LibDemo::waving:
-        goto waving;
-      case LibDemo::normal:
-        goto normal;
-      default:
-        FAIL("Unknown demo game state.");
+         if(theRobotInfo.number==1) 
+         {
+             goto keeper;
+         }
+         else if(theRobotInfo.number==2)
+         {
+             goto striker;
+         }
+         else if(theRobotInfo.number==5)
+         {
+             goto supporter;
+         }
+         else
+         {
+             goto stand;
+         }
     }
   }
 
-  initial_state(normal)
+  state(keeper)
   {
-    action
-    {
-      Striker();
-      theHeadControlMode = HeadControl::lookForward;
-    }
+      action
+      {
+         // Keeper();
+          Robot1();
+      }
   }
-
-  state(waving)
+  
+  state(striker)
   {
-    action
-    {
-      Activity(BehaviorStatus::waving);
-      theHeadControlMode = HeadControl::lookForward;
-      Waving();
-    }
+      action
+      {
+          //Striker();
+          Robot2();
+      }
   }
+  
+  state(supporter)
+  {
+      action
+      {
+          Stand();
+          //Supporter();
+      }
+  }
+  
+  state(stand)
+  {
+      action
+      {
+          LookForward();
+          Stand();
+      }
+  }
+  
 }
