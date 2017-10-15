@@ -20,6 +20,7 @@
 #include "Options/Output/MotionRequest/WalkAtAbsoluteSpeed.h"
 #include "Options/Output/MotionRequest/WalkAtRelativeSpeed.h"
 #include "Options/Output/MotionRequest/WalkToTarget.h"
+#include "Options/Output/MotionRequest/WalkPathMode.h"
 #include "Options/Output/MotionRequest/GetUpEngine.h"
 #include "Options/Output/PlaySound.h"
 
