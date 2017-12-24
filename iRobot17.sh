@@ -31,9 +31,9 @@ cd;
 
 elif [ $number -eq 2 ];then
 cd Make/Linux
-echo "Input your IP:192.168.20."
+echo "Input your IP:192.168.1."
 read ip
-./copyfiles $usingTarget 192.168.20.$ip -r
+./copyfiles $usingTarget 192.168.1.$ip -r
 cd
 
 elif [ $number -eq 22 ];then
@@ -45,9 +45,9 @@ cd
 
 elif [ $number -eq 3 ];then
 cd Make/Linux
-echo "Input your IP:192.168.20."
+echo "Input your IP:192.168.1."
 read ip
-./login 192.168.20.$ip 
+./login 192.168.1.$ip 
 cd
 
 elif [ $number -eq 33 ];then
@@ -62,11 +62,11 @@ cd Build/Linux/SimRobot/Develop
 ./SimRobot;
 
 elif [ $number -eq 5 ];then
-cd GameController2016
+cd GameController2017/build/jar
 java -jar GameController.jar
 
 elif [ $number -eq 6 ];then
-cd GameController2016
+cd GameController2017/build/jar
 java -jar TeamCommunicationMonitor.jar
 
 elif [ $number -eq 7 ];then
